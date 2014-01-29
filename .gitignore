@@ -13,6 +13,9 @@ TestResults
 *.user
 *.sln.docstates
 
+# Xamarin Studio
+*.userprefs
+
 # Build results
 [Dd]ebug/
 [Rr]elease/
