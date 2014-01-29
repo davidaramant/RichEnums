@@ -48,6 +48,6 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>Animal.Generated.cs</LastGenOutput>
     </None>
-    <None Include="EnumGenerator.tt" />
+    <None Include="EnumGenerator.t4" />
   </ItemGroup>
 </Project>
