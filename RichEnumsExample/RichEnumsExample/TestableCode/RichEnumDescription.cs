@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace RichEnumsExample.TestableCode
@@ -73,16 +74,14 @@ namespace RichEnumsExample.TestableCode
             }
         }
 
-        public readonly string Name;
         public readonly string Description;
         private readonly List<string[]> _entryRows;
 
         public readonly IEnumerable<FieldType> EntryFields;
 
-        public RichEnumDescription( string name, string description, List<string[]> entryEntryRows )
+        public RichEnumDescription( string description, List<string[]> entryEntryRows )
         {
-            Name = name;
-            Description = description;
+            Description = description ?? String.Empty;
             _entryRows = entryEntryRows;
 
             EntryFields = Enumerable.Empty<FieldType>();
@@ -93,9 +92,9 @@ namespace RichEnumsExample.TestableCode
             return
                 _entryRows.Select(
                     row => new Entry(
-                        name:row.First(),
-                        description:row.Skip(1).First(),
-                        fields: Enumerable.Empty<Field>()) );
+                        name: row.First(),
+                        description: row.Skip( 1 ).First(),
+                        fields: Enumerable.Empty<Field>() ) );
         }
 
         #region Parsing CSV file
@@ -112,36 +111,36 @@ namespace RichEnumsExample.TestableCode
         {
             var currentStage = Stage.Names;
 
-            int numFields = 0;
-            string[] names = null;
-            string enumName = null;
+            string[] fieldNames = null;
             string enumDescription = null;
             var rows = new List<string[]>();
 
             foreach( var line in lines )
             {
+                var rawRow = ParseRow( line ).ToArray();
                 switch( currentStage )
                 {
                     case Stage.Names:
-                        names = ParseRow( line ).Skip( 2 ).ToArray();
-                        numFields = names.Length;
-                        currentStage = Stage.Types;
+                        ValidateNameRow( rawRow );
+                        fieldNames = rawRow.Skip( 2 ).ToArray();
+                        currentStage = Stage.Descriptions;
+                        break;
+
+                    case Stage.Descriptions:
+                        ValidateDescriptionRow( rawRow, numFields: fieldNames.Length );
+                        enumDescription = rawRow.ElementAt( 1 );
+                        currentStage = fieldNames.Length > 0 ? Stage.Types : Stage.Entries;
                         break;
 
                     case Stage.Types:
-                        var rawRow = ParseRow( line );
-                        enumName = rawRow.ElementAt( 0 );
-                        enumDescription = rawRow.ElementAt( 1 );
+                        ValidateTypeRow( rawRow, numFields: fieldNames.Length );
+                        // Do type stuff here
                         currentStage = Stage.Entries;
                         break;
 
                     case Stage.Entries:
-                        var newRow = ParseRow( line ).ToArray();
-                        if( newRow.Length != numFields + 2 ) // These rows include the name as well
-                        {
-                            throw new ArgumentException( "Bad number of columns in data row." );
-                        }
-                        rows.Add( newRow );
+                        ValidateRowLength( rawRow, numFields: fieldNames.Length );
+                        rows.Add( rawRow );
                         break;
 
                     default:
@@ -149,7 +148,59 @@ namespace RichEnumsExample.TestableCode
                 }
             }
 
-            return new RichEnumDescription( enumName, enumDescription, rows );
+            return new RichEnumDescription( enumDescription, rows );
+        }
+
+        private static void ValidateNameRow( string[] row )
+        {
+            if( row.Length < 2 )
+            {
+                throw new ArgumentException( "Name row is too short." );
+            }
+            if( row[0] != "Name" )
+            {
+                throw new ArgumentException(
+                    String.Format( "Expected 'Name' in first column, got: {0}", row[0] ) );
+            }
+            if( row[1] != "Description" )
+            {
+                throw new ArgumentException(
+                    String.Format( "Expected 'Description' in second column, got: {0}", row[1] ) );
+            }
+        }
+
+        private static void ValidateDescriptionRow( string[] row, int numFields )
+        {
+            if( row[0] != "Descriptions" )
+            {
+                throw new ArgumentException(
+                    String.Format( "Expected 'Descriptions' in first column, got: {0}", row[0] ) );
+            }
+            if( row.Length < ( 2 + numFields ) )
+            {
+                throw new ArgumentException( "Description row does not have enough columns." );
+            }
+        }
+
+        private static void ValidateTypeRow( string[] row, int numFields )
+        {
+            if( row[0] != "Types" )
+            {
+                throw new ArgumentException(
+                    String.Format( "Expected 'Types' in first column, got: {0}", row[0] ) );
+            }
+            if( row.Length < ( 2 + numFields ) )
+            {
+                throw new ArgumentException( "Type row does not have enough columns." );
+            }
+        }
+
+        private static void ValidateRowLength( string[] row, int numFields )
+        {
+            if( row.Length < ( 2 + numFields ) )
+            {
+                throw new ArgumentException( "Row does not have enough columns." );
+            }
         }
 
         #endregion

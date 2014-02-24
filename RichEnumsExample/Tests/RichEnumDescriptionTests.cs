@@ -16,7 +16,6 @@ namespace Tests
 
             Assert.That( parsedFile, Is.Not.Null, "Should have returned a parsed file." );
 
-            Assert.That( parsedFile.Name, Is.EqualTo( "Animal" ), "Did not parse name." );
             Assert.That( parsedFile.Description, Is.EqualTo( "A collection of animals." ),
                 "Did not parse description." );
             Assert.That( parsedFile.EntryFields.Any(), Is.False, "Should not have any field types." );
@@ -25,10 +24,43 @@ namespace Tests
             Assert.That( parsedFile.GetEntries().First().Description, Is.EqualTo( "A canine." ), "Did not parse entry description." );
         }
 
+        [Test]
+        public void ShouldThrowWhenNameRowIsIncorrectLength()
+        {
+            Assert.Throws<ArgumentException>(
+                () => RichEnumDescription.ParseFile( new[] { MakeCsvRow( "Name" ) } ),
+                "Did not handle name row being too short." );
+        }
+
+        [Test]
+        public void ShouldThrowWhenNameRowDoesNotStartWithCorrectColumns()
+        {
+            Assert.Throws<ArgumentException>(
+                () => RichEnumDescription.ParseFile( new[] { MakeCsvRow( "NotName", "Description" ) } ),
+                "Did not handle bad first column name for name row." );
+
+            Assert.Throws<ArgumentException>(
+                () => RichEnumDescription.ParseFile( new[] { MakeCsvRow( "Name", "NotDescription" ) } ),
+                "Did not handle bad second column name for name row." );
+        }
+
+        [Test]
+        public void ShouldThrowWhenMissingDescriptionRow()
+        {
+            Assert.Throws<ArgumentException>(
+                () => RichEnumDescription.ParseFile( new[] { 
+                        MakeCsvRow( "Name", "Description" ),
+                        MakeCsvRow( "Dog", "Hello"),
+                    } ),
+                "Did not handle description row being missing." );
+        }
+
+        #region Test Data Generators
+
         private static IEnumerable<string> GetDescriptionWithoutFields()
         {
             yield return MakeCsvRow( "Name", "Description" );
-            yield return MakeCsvRow( "Animal", "A collection of animals." );
+            yield return MakeCsvRow( "Descriptions", "A collection of animals." );
             yield return MakeCsvRow( "Dog", "A canine." );
         }
 
@@ -36,5 +68,7 @@ namespace Tests
         {
             return String.Join( ",", columns.Select( _ => String.Format( "\"{0}\"", _.Replace( "\"", "\"\"" ) ) ) );
         }
+
+        #endregion
     }
 }
