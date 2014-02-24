@@ -11,14 +11,14 @@ namespace Tests
         [Test]
         public void ShouldHandleEmptyRow()
         {
-            Assert.That( CsvFile.ParseRow( String.Empty ), Is.Empty, "Did not handle empty row." );
+            Assert.That( RichEnumDescription.ParseRow( String.Empty ), Is.Empty, "Did not handle empty row." );
         }
 
         [Test]
         public void ShouldHandleJustSeparators()
         {
             Assert.That(
-                CsvFile.ParseRow( ",," ).ToArray(),
+                RichEnumDescription.ParseRow( ",," ).ToArray(),
                 Is.EqualTo( new[] { String.Empty, String.Empty } ),
                 "Did not parse empty columns." );
         }
@@ -27,7 +27,7 @@ namespace Tests
         public void ShouldHandleSingleUnescaptedColumn()
         {
             Assert.That(
-                CsvFile.ParseRow( "Column" ).ToArray(),
+                RichEnumDescription.ParseRow( "Column" ).ToArray(),
                 Is.EqualTo( new[] { "Column" } ),
                 "Did not parse single column." );
         }
@@ -36,7 +36,7 @@ namespace Tests
         public void ShouldHandleMultipleUnescapedColumns()
         {
             Assert.That(
-                CsvFile.ParseRow( "Column1,Column2" ).ToArray(),
+                RichEnumDescription.ParseRow( "Column1,Column2" ).ToArray(),
                 Is.EqualTo( new[] { "Column1", "Column2" } ),
                 "Did not parse multiple columns." );
         }
@@ -45,7 +45,7 @@ namespace Tests
         public void ShouldHandleSingleEscaptedColumn()
         {
             Assert.That(
-                CsvFile.ParseRow( "\"Column\"" ).ToArray(),
+                RichEnumDescription.ParseRow( "\"Column\"" ).ToArray(),
                 Is.EqualTo( new[] { "Column" } ),
                 "Did not parse single column." );
         }
@@ -54,7 +54,7 @@ namespace Tests
         public void ShouldHandleMultipleEscapedColumns()
         {
             Assert.That(
-                CsvFile.ParseRow( "\"Column1\",\"Column2\"" ).ToArray(),
+                RichEnumDescription.ParseRow( "\"Column1\",\"Column2\"" ).ToArray(),
                 Is.EqualTo( new[] { "Column1", "Column2" } ),
                 "Did not parse multiple columns." );
         }
@@ -63,7 +63,7 @@ namespace Tests
         public void ShouldHandleSingleUnescaptedColumnWithSpaces()
         {
             Assert.That(
-                CsvFile.ParseRow( "Column 1" ).ToArray(),
+                RichEnumDescription.ParseRow( "Column 1" ).ToArray(),
                 Is.EqualTo( new[] { "Column 1" } ),
                 "Did not parse single column." );
         }
@@ -72,7 +72,7 @@ namespace Tests
         public void ShouldHandleMultipleUnescapedColumnsWithSpaces()
         {
             Assert.That(
-                CsvFile.ParseRow( "Column 1,Column 2" ).ToArray(),
+                RichEnumDescription.ParseRow( "Column 1,Column 2" ).ToArray(),
                 Is.EqualTo( new[] { "Column 1", "Column 2" } ),
                 "Did not parse multiple columns." );
         }
@@ -81,7 +81,7 @@ namespace Tests
         public void ShouldHandleSingleEscaptedColumnWithSpaces()
         {
             Assert.That(
-                CsvFile.ParseRow( "\"Column 1\"" ).ToArray(),
+                RichEnumDescription.ParseRow( "\"Column 1\"" ).ToArray(),
                 Is.EqualTo( new[] { "Column 1" } ),
                 "Did not parse single column." );
         }
@@ -90,7 +90,7 @@ namespace Tests
         public void ShouldHandleMultipleEscapedColumnsWithSpaces()
         {
             Assert.That(
-                CsvFile.ParseRow( "\"Column 1\",\"Column 2\"" ).ToArray(),
+                RichEnumDescription.ParseRow( "\"Column 1\",\"Column 2\"" ).ToArray(),
                 Is.EqualTo( new[] { "Column 1", "Column 2" } ),
                 "Did not parse multiple columns." );
         }
@@ -99,7 +99,7 @@ namespace Tests
         public void ShouldHandleEscapedColumnsWithCommas()
         {
             Assert.That(
-                CsvFile.ParseRow( "\"Column, Number 1\",\"Column, Number 2\"" ).ToArray(),
+                RichEnumDescription.ParseRow( "\"Column, Number 1\",\"Column, Number 2\"" ).ToArray(),
                 Is.EqualTo( new[] { "Column, Number 1", "Column, Number 2" } ),
                 "Did not parse multiple columns." );
         }
@@ -109,7 +109,7 @@ namespace Tests
         public void ShouldHandleEscapedColumnsWithQuotes()
         {
             Assert.That(
-                CsvFile.ParseRow( "\"Column \"\"1\"\"\",\"Column \"\"2\"\"\"" ).ToArray(),
+                RichEnumDescription.ParseRow( "\"Column \"\"1\"\"\",\"Column \"\"2\"\"\"" ).ToArray(),
                 Is.EqualTo( new[] { "Column \"1\"", "Column \"2\"" } ),
                 "Did not parse multiple columns." );
         }

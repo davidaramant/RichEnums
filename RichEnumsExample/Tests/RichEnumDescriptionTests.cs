@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using RichEnumsExample.TestableCode;
 
 namespace Tests
 {
     [TestFixture]
-    public sealed class CsvFileTests
+    public sealed class RichEnumDescriptionTests
     {
         [Test]
-        public void ShouldParseCsvFile()
+        public void ShouldParseEnumNameAndDescription()
         {
-            var parsedFile = CsvFile.ParseFile( GetAnimalFileContents() );
+            var parsedFile = RichEnumDescription.ParseFile( GetAnimalFileContents() );
 
             Assert.That( parsedFile, Is.Not.Null, "Should have returned a parsed file." );
 
             Assert.That( parsedFile.Name, Is.EqualTo( "Animal" ), "Did not parse name." );
             Assert.That( parsedFile.Description, Is.EqualTo( "A collection of animals." ),
                 "Did not parse description." );
-            Assert.That( parsedFile.GetEntries().Count(), Is.EqualTo( 1 ), "Did not parse correct number of entries." );
         }
 
         private static IEnumerable<string> GetAnimalFileContents()
