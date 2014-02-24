@@ -3,4 +3,4 @@
 	this.ClassName = "Animal"; 
 	this.CsvFilePath = "Animal.csv";
 #>
-<#@ include file="EnumGenerator.tt" #>
+<#@ include file="EnumGenerator.t4" #>
