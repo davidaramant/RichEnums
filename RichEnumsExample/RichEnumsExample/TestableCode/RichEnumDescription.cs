@@ -75,31 +75,27 @@ namespace RichEnumsExample.TestableCode
 
         public readonly string Name;
         public readonly string Description;
-        private readonly List<string[]> _rows;
+        private readonly List<string[]> _entryRows;
 
-        public readonly IEnumerable<FieldType> FieldTypes;
+        public readonly IEnumerable<FieldType> EntryFields;
 
-        public RichEnumDescription( string name, string description, string[] fieldNames, Type[] fieldTypes, List<string[]> rows )
+        public RichEnumDescription( string name, string description, List<string[]> entryEntryRows )
         {
             Name = name;
             Description = description;
-            //_rows = rows;
+            _entryRows = entryEntryRows;
 
-            //FieldTypes = fieldNames.Zip(
-            //    fieldTypes,
-            //    ( fieldName, fieldType ) => new FieldType( fieldName, fieldType ) ).ToArray();
+            EntryFields = Enumerable.Empty<FieldType>();
         }
 
         public IEnumerable<Entry> GetEntries()
         {
             return
-                null;
-                //_rows.Select(
-                //    row => new Entry(
-                //        row.First(),
-                //        FieldTypes.Zip(
-                //            row.Skip( 1 ),
-                //            ( fieldType, colValue ) => new Field( fieldType, colValue ) ) ) );
+                _entryRows.Select(
+                    row => new Entry(
+                        name:row.First(),
+                        description:row.Skip(1).First(),
+                        fields: Enumerable.Empty<Field>()) );
         }
 
         #region Parsing CSV file
@@ -120,7 +116,6 @@ namespace RichEnumsExample.TestableCode
             string[] names = null;
             string enumName = null;
             string enumDescription = null;
-            Type[] types = null;
             var rows = new List<string[]>();
 
             foreach( var line in lines )
@@ -137,29 +132,24 @@ namespace RichEnumsExample.TestableCode
                         var rawRow = ParseRow( line );
                         enumName = rawRow.ElementAt( 0 );
                         enumDescription = rawRow.ElementAt( 1 );
-                        //types = rawRow.Skip( 2 ).Select( Type.GetType ).ToArray();
-                        //if( types.Length != numFields )
-                        //{
-                        //    throw new ArgumentException( "Bad number of types." );
-                        //}
                         currentStage = Stage.Entries;
                         break;
 
-                    //case Stage.Entries:
-                    //    var newRow = ParseRow( line ).ToArray();
-                    //    if( newRow.Length != numFields + 1 ) // These rows include the name as well
-                    //    {
-                    //        throw new ArgumentException( "Bad number of columns in data row." );
-                    //    }
-                    //    rows.Add( newRow );
-                    //    break;
+                    case Stage.Entries:
+                        var newRow = ParseRow( line ).ToArray();
+                        if( newRow.Length != numFields + 2 ) // These rows include the name as well
+                        {
+                            throw new ArgumentException( "Bad number of columns in data row." );
+                        }
+                        rows.Add( newRow );
+                        break;
 
-                    //default:
-                    //    throw new Exception( "Messed up parsing" );
+                    default:
+                        throw new Exception( "Messed up parsing" );
                 }
             }
 
-            return new RichEnumDescription( enumName, enumDescription, names, types, rows );
+            return new RichEnumDescription( enumName, enumDescription, rows );
         }
 
         #endregion
