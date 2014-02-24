@@ -5,6 +5,9 @@ using System.Text;
 
 namespace RichEnumsExample.TestableCode
 {
+    // The class is developed here so it can be easily tested.  It is then manually copied into the T4 file.
+    // This file itself is not needed for EnumGenerator.t4 to work.
+
     public sealed class CsvFile
     {
         public sealed class Entry : IEnumerable<Field>
