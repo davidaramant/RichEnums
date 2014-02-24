@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace RichEnumsExample.TestableCode
@@ -11,6 +10,14 @@ namespace RichEnumsExample.TestableCode
 
     public sealed class RichEnumDescription
     {
+        public sealed class CsvParseException : Exception
+        {
+            public CsvParseException( string message ) : base( message )
+            {
+
+            }
+        }
+
         public sealed class Entry : IEnumerable<Field>
         {
             public readonly string Name;
@@ -144,8 +151,13 @@ namespace RichEnumsExample.TestableCode
                         break;
 
                     default:
-                        throw new Exception( "Messed up parsing" );
+                        throw new CsvParseException( "Messed up parsing" );
                 }
+            }
+
+            if( currentStage != Stage.Entries )
+            {
+                throw new CsvParseException( "Unexpected end of file." );
             }
 
             return new RichEnumDescription( enumDescription, rows );
@@ -155,16 +167,16 @@ namespace RichEnumsExample.TestableCode
         {
             if( row.Length < 2 )
             {
-                throw new ArgumentException( "Name row is too short." );
+                throw new CsvParseException( "Name row is too short." );
             }
             if( row[0] != "Name" )
             {
-                throw new ArgumentException(
+                throw new CsvParseException(
                     String.Format( "Expected 'Name' in first column, got: {0}", row[0] ) );
             }
             if( row[1] != "Description" )
             {
-                throw new ArgumentException(
+                throw new CsvParseException(
                     String.Format( "Expected 'Description' in second column, got: {0}", row[1] ) );
             }
         }
@@ -173,12 +185,12 @@ namespace RichEnumsExample.TestableCode
         {
             if( row[0] != "Descriptions" )
             {
-                throw new ArgumentException(
+                throw new CsvParseException(
                     String.Format( "Expected 'Descriptions' in first column, got: {0}", row[0] ) );
             }
             if( row.Length < ( 2 + numFields ) )
             {
-                throw new ArgumentException( "Description row does not have enough columns." );
+                throw new CsvParseException( "Description row does not have enough columns." );
             }
         }
 
@@ -186,12 +198,12 @@ namespace RichEnumsExample.TestableCode
         {
             if( row[0] != "Types" )
             {
-                throw new ArgumentException(
+                throw new CsvParseException(
                     String.Format( "Expected 'Types' in first column, got: {0}", row[0] ) );
             }
             if( row.Length < ( 2 + numFields ) )
             {
-                throw new ArgumentException( "Type row does not have enough columns." );
+                throw new CsvParseException( "Type row does not have enough columns." );
             }
         }
 
@@ -199,7 +211,7 @@ namespace RichEnumsExample.TestableCode
         {
             if( row.Length < ( 2 + numFields ) )
             {
-                throw new ArgumentException( "Row does not have enough columns." );
+                throw new CsvParseException( "Row does not have enough columns." );
             }
         }
 

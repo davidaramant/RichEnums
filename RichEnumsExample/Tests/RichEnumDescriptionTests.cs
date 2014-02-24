@@ -27,7 +27,7 @@ namespace Tests
         [Test]
         public void ShouldThrowWhenNameRowIsIncorrectLength()
         {
-            Assert.Throws<ArgumentException>(
+            Assert.Throws<RichEnumDescription.CsvParseException>(
                 () => RichEnumDescription.ParseFile( new[] { MakeCsvRow( "Name" ) } ),
                 "Did not handle name row being too short." );
         }
@@ -35,11 +35,11 @@ namespace Tests
         [Test]
         public void ShouldThrowWhenNameRowDoesNotStartWithCorrectColumns()
         {
-            Assert.Throws<ArgumentException>(
+            Assert.Throws<RichEnumDescription.CsvParseException>(
                 () => RichEnumDescription.ParseFile( new[] { MakeCsvRow( "NotName", "Description" ) } ),
                 "Did not handle bad first column name for name row." );
 
-            Assert.Throws<ArgumentException>(
+            Assert.Throws<RichEnumDescription.CsvParseException>(
                 () => RichEnumDescription.ParseFile( new[] { MakeCsvRow( "Name", "NotDescription" ) } ),
                 "Did not handle bad second column name for name row." );
         }
@@ -47,7 +47,7 @@ namespace Tests
         [Test]
         public void ShouldThrowWhenMissingDescriptionRow()
         {
-            Assert.Throws<ArgumentException>(
+            Assert.Throws<RichEnumDescription.CsvParseException>(
                 () => RichEnumDescription.ParseFile( new[] { 
                         MakeCsvRow( "Name", "Description" ),
                         MakeCsvRow( "Dog", "Hello"),
