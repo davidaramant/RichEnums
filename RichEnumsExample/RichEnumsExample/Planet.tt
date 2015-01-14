@@ -1,0 +1,6 @@
+﻿<# 
+    this.Namespace = "RichEnumsExample";
+    this.ClassName = "Planet"; 
+    this.CsvFilePath = "Planets.csv";
+#>
+<#@ include file="EnumGenerator.t4" #>

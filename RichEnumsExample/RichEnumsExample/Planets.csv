@@ -1,0 +1,10 @@
+Name,Mass,Radius
+Planet,System.Double,System.Double
+Mercury,3.30E+23,2.44E+06
+Venus,4.87E+24,6.05E+06
+Earth,5.98E+24,6.38E+06
+Mars,6.42E+23,3.40E+06
+Jupiter,1.90E+27,7.15E+07
+Saturn,5.69E+26,6.03E+07
+Uranus,8.69E+25,2.56E+07
+Neptune,1.02E+26,2.47E+07

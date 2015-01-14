@@ -13,9 +13,13 @@
 
 namespace <#= this.Namespace #>
 {
+    /// <summary>
+    /// <#= this.ClassName #>
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCodeAttribute( "RichEnumGenerator", "1.0.0.0" )]
     public sealed partial class <#= this.ClassName #>
     {
+        private readonly string _instanceName;
 <# 
 var fileContents = ParseFile();
 
@@ -34,13 +38,17 @@ foreach( var fieldType in fileContents.FieldTypes )
 foreach( var entry in fileContents.GetEntries() )
 { 
 #>
+        /// <summary>
+        /// <#= entry.Name #>
+        /// </summary>
         public static readonly <#= this.ClassName #> <#= entry.Name #> = new <#= this.ClassName #>(
+            instanceName: "<#= entry.Name #>",
     <#
     for( int i = 0; i < entry.Count(); i++ )
     {
         var field = entry.ElementAt( i );
     #>
-        <#= field.Metadata.ArgumentName #>: <#= field.Value #><# if( i < entry.Count() - 1 ) { #>, <# } #>	
+        <#= field.Metadata.ArgumentName #>: <#= field.Value #><# if( i < entry.Count() - 1 ) { #>, <# } #>  
     <#
     }
     #>
@@ -50,41 +58,54 @@ foreach( var entry in fileContents.GetEntries() )
 #>
 
         private <#= this.ClassName #>(
+            string instanceName,
 <#
     for( int i  = 0; i < fileContents.FieldTypes.Count(); i++  )
     {
         var fieldType = fileContents.FieldTypes.ElementAt( i );
 #>
-            <#= fieldType.Type.FullName #> <#= fieldType.ArgumentName #><# if( i < fileContents.FieldTypes.Count() - 1 ) { #>, <# } #>	
+            <#= fieldType.Type.FullName #> <#= fieldType.ArgumentName #><# if( i < fileContents.FieldTypes.Count() - 1 ) { #>, <# } #>  
 <#
     }
 #>
         )
         {
+            _instanceName = instanceName;
 <#
     foreach( var fieldType in fileContents.FieldTypes )
     {
 #>
-            <#= fieldType.FieldName #> = <#= fieldType.ArgumentName #>;	
+            <#= fieldType.FieldName #> = <#= fieldType.ArgumentName #>; 
 <#
     }
 #>
         }
 
-		/// <summary>
-		/// Returns all the enumeration values.
-		/// </summary>
-		public static System.Collections.Generic.IEnumerable<<#= this.ClassName #>> GetValues()
-		{
+        /// <summary>
+        /// Returns the name of this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return _instanceName;
+        }
+
+        /// <summary>
+        /// Returns all the enumeration values.
+        /// </summary>
+        public static System.Collections.Generic.IEnumerable<<#= this.ClassName #>> GetAll()
+        {
 <#
 foreach( var entry in fileContents.GetEntries() )
 {
 #>
-			yield return <#= entry.Name #>;
+            yield return <#= entry.Name #>;
 <# 
 } 
 #>
-		}
+        }
     }
 }
 <#+

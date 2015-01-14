@@ -34,11 +34,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animal.Generated.cs">
+    <Compile Include="Planet.Custom.cs" />
+    <Compile Include="Planet.Generated.cs">
       <SubType>Code</SubType>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Animal.tt</DependentUpon>
+      <DependentUpon>Planet.tt</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -46,10 +47,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="Animal.csv" />
-    <None Include="Animal.tt">
+    <None Include="Planets.csv" />
+    <None Include="Planet.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Animal.Generated.cs</LastGenOutput>
+      <LastGenOutput>Planet.Generated.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
     <None Include="EnumGenerator.t4" />
